@@ -15,26 +15,34 @@ scp luciano.palmieri@ceres-dtn.scinet.usda.gov:/SCINet/RmtFile /Path/On/Local/Lc
 # Programs to install
 
 	1- miniconda
-	2- canu - conda install -c conda-forge -c bioconda -c defaults canu
+	2- canu - conda install -c conda-forge -c bioconda -c defaults canu (done)
 	3- medaka - conda create -n medaka -c conda-forge -c bioconda medaka
-	4- freebayes - conda install -c bioconda freebayes
+	4- freebayes - conda install -c bioconda freebayes (done)
 	5- masurca for POLCA
 	
 # Estimating genome size
 
-Rhynchophorus ferrugineus (red palm weevil)
+|Species|total length(Mb)|protein count|CG%|
+|-------|
+|*Rhynchophorus ferrugineus*|589.403|25382|31.4998|
+|*Sitophilus oryzae*|770.568|23498|32.8998|
+|*Listronotus oregonensis*|1293.28|0|30.9|
+|*Pachyrhynchus sulphureomaculatus*|2051.39|0|33.7631|
+|*Ips nitidus*|345.005|0|36.1|
+|*Listronotus bonariensis*|1112.44|0|31.3|
+|*Elaeidobius kamerunicus*|269.635|0|31|
+|*Hypothenemus hampei*|156.921|0|28.55|
+|*Ips typographus*|236.816|0|35.2|
+|*Pissodes strobi*|2025.02|0||37.1|
+|*Dendroctonus ponderosae*|238.819|15876|36.35|
 
-Summary
-Statistics:	 total length (Mb): 589.403
-protein count: 25382
-GC%: 31.4998
 
-Sitophilus oryzae (rice weevil)
+*Metamasius hemipterus* ?
+total lenght: 
 
-Summary
-Statistics:	 total length (Mb): 770.568
-protein count: 23498
-GC%: 32.8998	
+
+
+
 
 
 
