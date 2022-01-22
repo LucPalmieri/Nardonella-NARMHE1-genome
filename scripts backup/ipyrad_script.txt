@@ -1,0 +1,136 @@
+# IPYRAD SCRIPT #
+## TMUX
+
+* To make a new tmux session called "MySession": 
+tmux new -s MySession
+
+* To disconnect from the tmux session so you can close your computer, type "control+b" and then "d"
+
+* To attach to the tmux session to check on your run, type:
+tmux a -t MySession
+
+## Ipyrad instalation
+
+The first step is to create a new conda environment
+go to see extra conda commands: https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf
+
+conda info **to see if conda is installed**
+conda create --name myENV **to create a new env called myENV**
+
+conda install ipyrad -c conda-forge -c bioconda **to install ipyrad**
+conda config --add channels conda-forge
+conda config --set channel_priority strict **to avoid imcompatibilities**
+
+conda activate myENV **to activate you env**
+
+## CUTADAPT first
+
+* more information about cutadapt 
+https://cutadapt.readthedocs.io/en/stable/guide.html
+
+although ipyrad uses cutadapt on its pipenline I prefer to run a first round of adpters removal using cutadapt alone. This way ismore easy to verify if any error occurs.
+you might need a barcode file to use cutadapt. If so, generate one using the structure bellow:
+
+>sample_1  
+^cgtagc
+>sample_2
+^tagcta
+>sample_3
+^atgcta
+
+* to run cutadapt use
+
+*single-end*
+cutadapt -e 0.15 --no-indels --cores=0 --discard-untrimmed -g file:barcode_file.fasta -o "qquer-nome-{name}.fastq.gz" input_file.fastq.gz
+
+*pair-end with dual indexes* CACTCCATAT+CCATCAGAAC
+cutadapt --pair-adapters -a CACTCCATAT -a CCATCAGAAC -A CCATCAGAAC -a CACTCCATAT -o out.1.fastq.gz -p out.2.fastq.gz MTM002_S4_L002_R1_001.fastq.gz MTM002_S4_L002_R2_001.fastq.gz
+
+
+## Start ipyrad assemble
+
+create a new parameters file, here called 'data1'
+
+ipyrad -n data1
+ipyrad params-data1.txt
+
+* edit the params file for data1 with your text editor:
+
+parameters documentation can be found on:
+https://ipyrad.readthedocs.io/en/latest/6-params.html
+
+nano params-data1.txt
+
+------- ipyrad params file (v.0.9.68)-------------------------------------------                              
+data1                 ## [0] [assembly_name]: Assembly name. Used to name output directories for ass$
+/home/BIOTECH/psharma/Luciano/Curculionidae/metamasius ## [1] [project_dir]: Project dir (made in curdir if n$
+                      ## [2] [raw_fastq_path]: Location of raw non-demultiplexed fastq files         
+                      ## [3] [barcodes_path]: Location of barcodes file
+/home/BIOTECH/psharma/Luciano/Curculionidae/metamasius/*.fastq.gz ## [4] [sorted_fastq_path]: Location of demultiplexed/sorted fastq files       
+denovo                ## [5] [assembly_method]: Assembly method (denovo, reference)                  
+                      ## [6] [reference_sequence]: Location of reference sequence file               
+pairddrad           ## [7] [datatype]: Datatype (see docs): rad, gbs, ddrad, etc.                  
+TGCA,                 ## [8] [restriction_overhang]: Restriction overhang (cut1,) or (cut1, cut2)    
+5                     ## [9] [max_low_qual_bases]: Max low quality base calls (Q<20) in a read       
+23                  ## [10] [phred_Qscore_offset]: phred Q score offset (33 is default and very st$
+6                     ## [11] [mindepth_statistical]: Min depth for statistical base calling         
+6                     ## [12] [mindepth_majrule]: Min depth for majority-rule base calling           
+10000                 ## [13] [maxdepth]: Max cluster depth within samples
+0.75                ## [14] [clust_threshold]: Clustering threshold for de novo assembly
+0                     ## [15] [max_barcode_mismatch]: Max number of allowable mismatches in barcodes
+2                     ## [16] [filter_adapters]: Filter for adapters/primers (1 or 2=stricter)
+25                  ## [17] [filter_min_trim_len]: Min length of reads after adapter trim
+2                     ## [18] [max_alleles_consens]: Max alleles per site in consensus sequences
+0.1                 ## [19] [max_Ns_consens]: Max N's (uncalled bases) in consensus
+0.05                  ## [20] [max_Hs_consens]: Max Hs (heterozygotes) in consensus
+2                   ## [21] [min_samples_locus]: Min # samples per locus for output
+0.2                   ## [22] [max_SNPs_locus]: Max # SNPs per locus
+8                     ## [23] [max_Indels_locus]: Max # of indels per locus
+0.5                   ## [24] [max_shared_Hs_locus]: Max # heterozygous sites per locus
+0, 0, 0, 0            ## [25] [trim_reads]: Trim raw read edges (R1>, <R1, R2>, <R2) (see docs)
+0, 0, 0, 0            ## [26] [trim_loci]: Trim locus edges (see docs) (R1>, <R1, R2>, <R2)
+p, s, u, n, v       ## [27] [output_formats]: Output formats (see docs)
+                      ## [28] [pop_assign_file]: Path to population assignment file
+                      ## [29] [reference_as_filter]: Reads mapped to this reference are removed in s$
+
+**to keep track I indented the numbers at the param files**
+
+* OBS for Metamasius RAD data
+
+These are the enzymes used:
+NsiI:  5’... ATGCA^T ...3’
+Bfal:  5’... C^TAG ...3’
+
+The barcode file indicates the cutter is: 
+#CUTTER=TGCA
+
+* to run ipyrad
+
+ipyrad -p params-metaRAD.txt -c 12 -s 1234567
+
+-p <-parameter file
+-c <-number of cores to use
+-s <-steps of ipyrad pipeline you want to run
+
+ -------------------------------------------------------------
+  ipyrad [v.0.7.30]
+  Interactive assembly and analysis of RAD-seq data
+ -------------------------------------------------------------
+  New Assembly: Chorumela
+  establishing parallel connection:
+  host compute node: [32 cores] on carrot.vcru.wisc.edu
+
+  Step 1: Loading sorted fastq data to Samples
+    Warning: '_R2_' was detected in a file name, which suggests the data may
+    be paired-end. If so, you should set the parameter 'datatype' to a paired
+    option (e.g., pairddrad or pairgbs) and re-run step 1, which will require
+    using the force flag (-f) to overwrite existing data.
+
+  [####################] 100%  loading reads         | 0:00:12
+  16 fastq files loaded to 16 Samples.
+
+
+good luck!
+
+
+

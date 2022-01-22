@@ -1,0 +1,40 @@
+# Metamasius genome on ARS SciNet
+
+Login: ssh luciano.palmieri@ceres.scinet.usda.gov
+
+Password: ARSH0n0ray@2022+
+
+## Transfer To Ceres:
+
+scp /path/to/file/file.ext  luciano.palmieri@ceres-dtn.scinet.usda.gov:/home/luciano.palmieri/bin
+
+## Transfer From Ceres:
+
+scp luciano.palmieri@ceres-dtn.scinet.usda.gov:/SCINet/RmtFile /Path/On/Local/LclFile
+
+# Programs to install
+
+	1- miniconda
+	2- canu - conda install -c conda-forge -c bioconda -c defaults canu
+	3- medaka - conda create -n medaka -c conda-forge -c bioconda medaka
+	4- freebayes - conda install -c bioconda freebayes
+	5- masurca for POLCA
+	
+# Estimating genome size
+
+Rhynchophorus ferrugineus (red palm weevil)
+
+Summary
+Statistics:	 total length (Mb): 589.403
+protein count: 25382
+GC%: 31.4998
+
+Sitophilus oryzae (rice weevil)
+
+Summary
+Statistics:	 total length (Mb): 770.568
+protein count: 23498
+GC%: 32.8998	
+
+
+
