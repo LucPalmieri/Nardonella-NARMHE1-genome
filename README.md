@@ -1,4 +1,5 @@
-# Nardonella genome.
+# Draft Genome Sequence of *Candidatus Nardonella dryophthoridicola* NARMHE1, Endosymbiont of *Metamasius hemipterus* (Curculionidae, Dryophthorinae).
+You will find below the codes and the list of programs I used to generate the draft genome and annotation of *Candidatus Nardonella dryophthoridicola* strain NARMHE1, obtained via Oxford Nanopore sequencing of ovaries of its host, the weevil *Metamasius hemipterus*.
 
 ## Sorting bacteria from host sequences.
 
