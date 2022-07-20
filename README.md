@@ -47,7 +47,6 @@ For Illumina reads:
 	blastn -db nardonella_genome.fasta -query ovaryR.fasta -outfmt 6 -out blastn_ovary_reverse.tsv
 
 Batch blast search on multiple Nanopore fasta files.
-**if using with different database, remember to change database name on bash file before running**
 
 	nano bash_finder.sh
 
@@ -134,8 +133,6 @@ To remove short reads and do a light QC on Nanopore reads using [Filtlong](https
 
 ## Assembling the Nardonella genome.
 
-As our Nanopore reads are not very long, I decided to run the assembly using two different strategies and then combine the results.
-
 ### Canu assembly.
 [Canu](https://github.com/marbl/canu)
 
@@ -153,21 +150,21 @@ As our Nanopore reads are not very long, I decided to run the assembly using two
 Correcting with long reads only using [Medaka](https://github.com/nanoporetech/medaka)
 
 	conda activate medaka
-	medaka_consensus -i /media/luciano/WIP/Nardonella_genome/ONT_merged/ONT_merged.fastq -d canu_contigs.fasta -o long_canu_corrected -m r103_hac_g507 -t 4
-	medaka_consensus -i /media/luciano/WIP/Nardonella_genome/ONT_merged/ONT_merged.fastq -d flye_contigs.fasta -o long_flye_corrected -m r103_hac_g507 -t 4
+	medaka_consensus -i ONT_merged.fastq -d canu_contigs.fasta -o long_canu_corrected -m r103_hac_g507 -t 4
+	medaka_consensus -i ONT_merged.fastq -d flye_contigs.fasta -o long_flye_corrected -m r103_hac_g507 -t 4
 
 ### Additional polishing with short reads.
 
 First short read polishing with [polypolish](https://github.com/rrwick/Polypolish)
 
 	bwa index medaka_consensus.fasta
-	bwa mem -t 4 -a medaka_consensus.fasta /media/luciano/WIP/Nardonella_genome/Illumina_reads/illumina_corrected_R1_nardo.fastq.gz > alignments_R1.sam
-	bwa mem -t 4 -a medaka_consensus.fasta /media/luciano/WIP/Nardonella_genome/Illumina_reads/illumina_corrected_R2_nardo.fastq.gz > alignments_R2.sam
+	bwa mem -t 4 -a medaka_consensus.fasta illumina_corrected_R1_nardo.fastq.gz > alignments_R1.sam
+	bwa mem -t 4 -a medaka_consensus.fasta illumina_corrected_R2_nardo.fastq.gz > alignments_R2.sam
 	polypolish medaka_consensus.fasta alignments_R1.sam alignments_R2.sam > polished.fasta
 
 Extra polishing with [POLCA](https://github.com/alekseyzimin/masurca)
 
-	polca.sh -a consensus_polished.fasta -r '/media/luciano/WIP/Nardonella_genome/Illumina_reads/illumina_corrected_R1_nardo.fastq.gz /media/luciano/WIP/Nardonella_genome/Illumina_reads/illumina_corrected_R2_nardo.fastq.gz' -t 4
+	polca.sh -a consensus_polished.fasta -r 'illumina_corrected_R1_nardo.fastq.gz illumina_corrected_R2_nardo.fastq.gz' -t 4
 
 |**Canu assembly summary after POLCA**|
 |-----------------|
@@ -216,41 +213,23 @@ Using homology between the sequences and reference genomes to identify and corre
 
 	conda activate python3
 
-	ragtag.py correct nardonella_ALLgenome.fa merged_canu_flye_contigs.fasta -u -o ./corrected -t 4 -R /media/luciano/WIP/Nardonella_genome/ONT_merged/ONT_deduplicated.fastq -T ont
+	ragtag.py correct nardonella_ALLgenome.fa merged_canu_flye_contigs.fasta -u -o ./corrected -t 4 -R ONT_deduplicated.fastq -T ont
 
 ### Scafolding the corrected file with reference nardonella proteins.
-
-After homology correction I used the protein reference sequences of the Nardonella of *Rhynchophorus ferrugineus* to order and orient our contigs.
-Gaps (stretches of "N" characters) are placed between adjacent query sequences to indicate the presence of unknown sequence.
 
 	ragtag.py scaffold Nardonella_RFE.fasta corrected/ragtag.correct.fasta -C -t 4 -o ./scaffold_RFEprotein
 
 ## Gene annotation with NCBI [prokaryot genome annotation pipeline ](https://www.ncbi.nlm.nih.gov/genome/annotation_prok/).
-**instaled on my local machine**
 
-	sudo chmod 666 /var/run/docker.sock
-to resolve a docker conflict.
-
-	./pgap.py -n  -v -o ./FINAL_assembly final.yaml --ignore-all-errors --taxcheck  -d
-
-PGAP's final report found 40 pseudogenes, some of which with multiple problems.
-I decided to take a look at the pseudogenes to see what was causing the problem.
-Most of the pseudogenes had long stretches of the same base (see example below).
-My conclusion was that these were caused by missassemble of repeated regions.
-I then removed these genes for the final genome version.
-
-### Filtering pseudogenes with [Pseudofinder](https://github.com/filip-husnik/pseudofinder)
-
-Here I used the PGAP results combined with the protein reference sequences to parse pseudo from coding genes. 
-Intergenic regions remained intact.
-
-	python3 pseudofinder.py annotate -g annot.gbk -db nardonella_protein_database.fasta -t 4 -op Pseudofinder_
-
-The pseudo.fasta file was used to manually curate out the pseudogenes from each original contig using sed.
-
-	sed -e "s/TGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGCGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCGGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTAA//g" -i.backup contig01.fasta
-
-The sequences marked with a (-) on pseudo.fasta were reverse-complemented before sed search at the [Sequence Manipulation Suite](https://www.bioinformatics.org/sms/index.html)
-
-The curated contigs were merged and annotated again with PGAP which this time showed only one pseudogene present.
 The final corrected, scaffolded, and curated assemble file (Nardonella_MHE.fasta) was submitted to GenBank for final official annotation.
+The contigs have been deposited in GenBank accession number JAKMAI010000000 under the BioProject accession number PRJNA798699.
+
+|**ID**|**Lenght**|**Acession number**|
+|----------|--------|---------|
+|contig01|12,016 bp|JAKMAI010000001| 
+|contig02|28,356 bp|JAKMAI010000002| 
+|contig03|16,370 bp|JAKMAI010000003| 
+|contig04|6,418 bp|JAKMAI010000004| 
+|contig05|12,133 bp|JAKMAI010000005| 
+|contig06|13,069 bp|JAKMAI010000006| 
+|contig00|91,945 bp|JAKMAI010000007|
