@@ -1,11 +1,10 @@
-# Draft Genome Sequence of *Candidatus Nardonella dryophthoridicola* NARMHE1, Endosymbiont of *Metamasius hemipterus* (Curculionidae, Dryophthorinae).
-You will find below the codes and the list of programs I used to generate the draft genome and annotation of *Candidatus Nardonella dryophthoridicola* strain NARMHE1, obtained via Oxford Nanopore sequencing of ovaries of its host, the weevil *Metamasius hemipterus*.
+## Draft Genome Sequence of *Candidatus Nardonella dryophthoridicola* NARMHE1, Endosymbiont of *Metamasius hemipterus* (Curculionidae, Dryophthorinae).
+You will find below the codes, the list of programs, and parameters I used to generate and analyze the draft genome and annotation of *Nardonella dryophthoridicola* strain NARMHE1. For more information see the [publication, under review]
 
-## Sorting bacteria from host sequences.
+## 1 - Sorting bacteria from host sequences.
 
 First, convert target fastq.gz to fasta files using 
 [Seqtk](https://github.com/lh3/seqtk)
-
 **only fasta files can be used on blastn**
 
 For Illumina reads:
@@ -110,10 +109,10 @@ Concatenate all the sorted Nanopore fastq files on one single file.
 
 	cat *_nardo.fastq > ONT_merged.fastq
 
-Sequence sorting is done.
-We now have two files (forward and reverse) for Illumina and one for Nanopore each containing only endosymbiont reads.
+Sequence sorting is complete.
+We now have two files (forward and reverse) for Illumina and/or one for Nanopore each containing only endosymbiont reads.
 
-## File correction and quality control.
+## 2 -  File correction and quality control.
 
 Following sorting the reads need some attention.
 Illumina forward an reverse files might not have the same number of reads, and reads might be in random order.
@@ -124,7 +123,7 @@ For paired-end reads in two files:
 	repair.sh in1=illumina_uncorrected_R1_nardo.fastq.gz.fq in2=illumina_uncorrected_R2_nardo.fastq.gz out1=illumina_corrected_R1_nardo.fastq.gz out2=illumina_corrected_R2_nardo.fastq.gz outsingle=unpaired.fastq.gz
 
 The Nanopore file might have very short and duplicated sequences.
-To remove duplicated sequences using [BBmap] tool depuple:
+To remove duplicated sequences using [BBmap] tool depupe:
 
 	dedupe.sh in=ONT_merged.fastq out=deduplicated.fastq ac=f -da
 
@@ -132,7 +131,7 @@ To remove short reads and do a light QC on Nanopore reads using [Filtlong](https
 
 	filtlong --min_length 500 --keep_percent 95 deduplicated.fastq > deduplicated.fastq
 
-## Assembling the Nardonella genome.
+## 3 - Assembling the Nardonella genome.
 
 ### Canu assembly.
 [Canu](https://github.com/marbl/canu)
@@ -199,7 +198,7 @@ The contigs were combined using [Quickmerge](https://github.com/mahulchak/quickm
 |  seq006_polypolish (6,417 bp)|
 
 The merging process resulted in seven contigs.
-I pass the combined file through one extra round of polishing with long and short reads.
+I passed the combined file through one extra round of polishing with long and short reads.
 
 |**Combined assembly summary after POLCA**|
 |---------|
@@ -208,7 +207,7 @@ I pass the combined file through one extra round of polishing with long and shor
 |Assembly Size: 206311|
 |Consensus Quality: 99.9477|
 
-### Scaffolding using Nardonella reference genomes.
+## 4 - Scaffolding using Nardonella reference genomes.
 
 Using homology between the sequences and reference genomes to identify and correct potential misassemblies with [RagTag](https://github.com/malonge/RagTag).
 
@@ -220,7 +219,7 @@ Using homology between the sequences and reference genomes to identify and corre
 
 	ragtag.py scaffold Nardonella_RFE.fasta corrected/ragtag.correct.fasta -C -t 4 -o ./scaffold_RFEprotein
 
-## Gene annotation with NCBI [prokaryot genome annotation pipeline ](https://www.ncbi.nlm.nih.gov/genome/annotation_prok/).
+## 5 - Gene annotation with NCBI [prokaryot genome annotation pipeline ](https://www.ncbi.nlm.nih.gov/genome/annotation_prok/).
 
 The final corrected, scaffolded, and curated assemble file (Nardonella_MHE.fasta) was submitted to GenBank for final official annotation.
 The contigs have been deposited in GenBank accession number JAKMAI010000000 under the BioProject accession number PRJNA798699.
