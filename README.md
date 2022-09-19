@@ -221,8 +221,8 @@ Using homology between the sequences and reference genomes to identify and corre
 
 ## 5 - Gene annotation with NCBI [prokaryot genome annotation pipeline ](https://www.ncbi.nlm.nih.gov/genome/annotation_prok/).
 
-The final corrected, scaffolded, and curated assemble file (Nardonella_MHE.fasta) was submitted to GenBank for final official annotation.
-The contigs have been deposited in GenBank accession number JAKMAI010000000 under the BioProject accession number PRJNA798699.
+The final corrected, scaffolded, and curated assemble file (Nardonella_MHE.fasta) was submitted to GenBank for official annotation.
+The contigs have been deposited in GenBank accession number [JAKMAI010000000](https://www.ncbi.nlm.nih.gov/nuccore/JAKMAI000000000.1/) under the BioProject accession number PRJNA798699.
 
 |**ID**|**Lenght**|**Acession number**|
 |----------|--------|---------|
