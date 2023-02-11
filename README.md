@@ -1,5 +1,5 @@
 ## Supplementary information - Draft Genome Sequence of *Nardonella dryophthoridicola* NARMHE1, Endosymbiont of *Metamasius hemipterus*.
-You will find below the codes, the list of programs, and parameters I used to generate and analyze the draft genome of *Nardonella* strain NARMHE1. In this repository you can also find Oxford Nanopore run reports and a folder containing the alignement used to run the phylogenetic analysis. For more information see the [publication, under review]
+You will find below the codes, the list of programs, and parameters I used to generate and analyze the draft genome of *Nardonella* strain NARMHE1. In this repository you can also find Oxford Nanopore run reports and a folder containing the alignement used to run the phylogenetic analysis. For more information see the [Microbiology Resources Announcement, Volume 11 Issue 11  e00738-22. [DOI](https://doi.org/10.1128/mra.00738-22)]
 
 ## 1 - Sorting bacteria from host sequences.
 
