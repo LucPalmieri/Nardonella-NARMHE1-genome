@@ -1,11 +1,11 @@
 ## Supplementary information - Draft Genome Sequence of *Nardonella dryophthoridicola* NARMHE1, Endosymbiont of *Metamasius hemipterus*.
-You will find below the codes, the list of programs, and parameters I used to generate and analyze the draft genome of *Nardonella* strain NARMHE1. In this repository you can also find Oxford Nanopore run reports and a folder containing the alignement used to run the phylogenetic analysis. For more information see the [Microbiology Resources Announcement, Volume 11 Issue 11  e00738-22. [DOI](https://doi.org/10.1128/mra.00738-22)]
+Below, you will find the codes, the list of programs, and the parameters I used to generate and analyze the draft genome of *Nardonella* strain NARMHE1. This repository also contains Oxford Nanopore run reports and a folder with the alignment used for the phylogenetic analysis. For more information, see the [Microbiology Resources Announcement, Volume 11 Issue 11 e00738-22. [DOI](https://doi.org/10.1128/mra.00738-22)]
 
 ## 1 - Sorting bacteria from host sequences.
 
 First, convert target fastq.gz to fasta files using 
 [Seqtk](https://github.com/lh3/seqtk)
-**only fasta files can be used on blastn**
+> **Note:** Only fasta files can be used on blastn.
 
 For Illumina reads:
 
@@ -18,8 +18,7 @@ For multiple Nanopore fastq files do a batch conversion using the script below.
 	nano bash_converter.sh
 
 Copy and paste code on the bash_converter.sh file.
-
-	#!/usr/bin/env bash
+#!/usr/bin/env bash
 		
 	#running another program with the shell: seqtk
 	#This command will convert multiple fastq files to the fasta format
@@ -51,8 +50,7 @@ Batch blast search on multiple Nanopore fasta files.
 	nano bash_finder.sh
 
 Copy and paste code on the bash_finder.sh file.
-
-	#!/usr/bin/env bash
+#!/usr/bin/env bash
 	
 	#running another program with the shell: blastn
 	#This command will search multiple fasta files for database query matches
@@ -74,7 +72,7 @@ This should be done separately on Illumina and Nanopore reads.
 
 	awk '{ if($11 <= 0.000001 ) {print}}' blastn_nardonella_sequences.tsv -> blastn_nardonella sequences_filtered.tsv
 
-Filter out blast identified Nardonella sequences from original fastq.gz files.
+	awk '{ if($11 <= 0.000001 ) {print}}' blastn_nardonella_sequences.tsv > blastn_nardonella_sequences_filtered.tsv
 This will finally sort out bacteria sequences from host beetle sequences.
 
 Extract sequences with names in file name.lst, one sequence name per line:
@@ -90,9 +88,8 @@ Batch extraction for multiple Nanopore files.
 
 	nano bash_filter.sh
 
-Copy and paste code on the bash_fiter.sh file.
-
-	#!/usr/bin/env bash
+Copy and paste code on the bash_filter.sh file.
+#!/usr/bin/env bash
 	
 	#running another program with the shell: seqtk
 	#This command will find the sequences on the query .tsv file and filter them out on a new file
@@ -224,7 +221,7 @@ Using homology between the sequences and reference genomes to identify and corre
 The final corrected, scaffolded, and curated assemble file (Nardonella_MHE.fasta) was submitted to GenBank for official annotation.
 The contigs have been deposited in GenBank accession number [JAKMAI010000000](https://www.ncbi.nlm.nih.gov/nuccore/JAKMAI000000000.1/) under the BioProject accession number PRJNA798699.
 
-|**ID**|**Lenght**|**Acession number**|
+|**ID**|**Length**|**Accession number**|
 |----------|--------|---------|
 |contig01|12,016 bp|JAKMAI010000001| 
 |contig02|28,356 bp|JAKMAI010000002| 
