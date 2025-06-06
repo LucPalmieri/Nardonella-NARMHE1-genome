@@ -1,0 +1,8 @@
+# Ignore sequencing data and intermediate files
+*.fastq
+*.fasta
+*.fq
+*.fa
+*.tsv
+*.sam
+*.bam
